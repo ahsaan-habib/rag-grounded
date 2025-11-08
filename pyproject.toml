@@ -19,3 +19,6 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 include = ["rag_grounded*"]
+
+[project.scripts]
+rag = "rag_grounded.cli:main"
