@@ -6,7 +6,8 @@ from .store.vector import VectorStore
 
 SYSTEM = """You answer questions about Laravel, Filament and Livewire using ONLY
 the numbered context passages. Cite passages inline like [1] or [2][3] after
-each sentence that uses them."""
+each sentence that uses them. If the passages do not contain the answer, say
+you don't know."""
 
 
 def ask(question: str) -> str:
