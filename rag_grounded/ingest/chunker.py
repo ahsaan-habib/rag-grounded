@@ -73,7 +73,8 @@ def chunk_section(section: Section, target: int = 650, max_tokens: int = 800,
 
     chunks = []
     for i, text in enumerate(pieces):
-        cid = hashlib.sha1(f"{section.heading}:{i}:{text[:200]}".encode()).hexdigest()[:16]
+        # source must be in the id: "Installation" exists in ~40 files
+        cid = hashlib.sha1(f"{section.source}:{section.heading}:{i}:{text[:200]}".encode()).hexdigest()[:16]
         chunks.append(Chunk(id=cid, source=section.source, heading=section.heading, text=text))
     return chunks
 
