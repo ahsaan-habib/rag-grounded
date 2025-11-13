@@ -7,12 +7,16 @@ from pathlib import Path
 def cmd_ingest(args) -> None:
     from .ingest.chunker import chunk_sections
     from .ingest.loaders import load_corpus
+    from .store.bm25 import BM25Index
     from .store.vector import VectorStore
 
     sections = load_corpus(Path(args.path))
     chunks = chunk_sections(sections)
     store = VectorStore()
     store.add(chunks)
+    # bm25 is rebuilt from the whole collection so it never drifts from chroma
+    ids, texts = store.all()
+    BM25Index(ids, texts).save()
     print(f"{len(sections)} sections -> {len(chunks)} chunks, index now {store.count()}")
 
 

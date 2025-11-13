@@ -37,5 +37,9 @@ class VectorStore:
         }
         return [by_id[i] for i in ids if i in by_id]
 
+    def all(self) -> tuple[list[str], list[str]]:
+        res = self.col.get(include=["documents"])
+        return res["ids"], res["documents"]
+
     def count(self) -> int:
         return self.col.count()
