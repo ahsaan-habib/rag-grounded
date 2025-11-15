@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from .config import settings
 from .llm.ollama import Ollama
-from .store.vector import VectorStore
+from .retrieval.hybrid import HybridRetriever
 
 SYSTEM = """You answer questions about Laravel, Filament and Livewire using ONLY
 the numbered context passages. Cite passages inline like [1] or [2][3] after
@@ -11,9 +11,9 @@ you don't know."""
 
 
 def ask(question: str) -> str:
-    store = VectorStore()
-    hits = store.search(question, top_k=settings.top_k)
-    chunks = store.get([cid for cid, _ in hits])
+    retriever = HybridRetriever()
+    ids = retriever.retrieve(question)[: settings.top_k]
+    chunks = retriever.vectors.get(ids)
 
     context = "\n\n".join(
         f"[{i}] ({c.source} — {c.heading})\n{c.text}" for i, c in enumerate(chunks, 1)
