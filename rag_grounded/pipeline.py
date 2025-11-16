@@ -3,6 +3,7 @@ from __future__ import annotations
 from .config import settings
 from .llm.ollama import Ollama
 from .retrieval.hybrid import HybridRetriever
+from .retrieval.rerank import Reranker
 
 SYSTEM = """You answer questions about Laravel, Filament and Livewire using ONLY
 the numbered context passages. Cite passages inline like [1] or [2][3] after
@@ -12,8 +13,8 @@ you don't know."""
 
 def ask(question: str) -> str:
     retriever = HybridRetriever()
-    ids = retriever.retrieve(question)[: settings.top_k]
-    chunks = retriever.vectors.get(ids)
+    candidates = retriever.vectors.get(retriever.retrieve(question))
+    chunks = [c for c, _ in Reranker().rank(question, candidates)[: settings.top_k]]
 
     context = "\n\n".join(
         f"[{i}] ({c.source} — {c.heading})\n{c.text}" for i, c in enumerate(chunks, 1)
