@@ -23,7 +23,21 @@ def cmd_ingest(args) -> None:
 def cmd_ask(args) -> None:
     from .pipeline import ask
 
-    print(ask(args.question))
+    res = ask(args.question)
+    out = res.output
+    if out.kind == "refusal":
+        print(out.message)
+        if out.nearest:
+            print("\nClosest things I found:")
+            for c in out.nearest:
+                print(f"  - {c.source} — {c.heading}")
+    else:
+        print(out.text)
+        print("\nSources:")
+        for c in out.citations:
+            print(f"  [{c.n}] {c.source} — {c.heading}")
+    if args.verbose:
+        print("\n" + res.trace.model_dump_json(indent=2, exclude={"messages", "contexts"}))
 
 
 def main() -> None:
@@ -36,6 +50,7 @@ def main() -> None:
 
     a = sub.add_parser("ask")
     a.add_argument("question")
+    a.add_argument("-v", "--verbose", action="store_true")
     a.set_defaults(func=cmd_ask)
 
     args = p.parse_args()
