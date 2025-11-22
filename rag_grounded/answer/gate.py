@@ -16,6 +16,8 @@ from ..ingest.chunker import Chunk
 from .claims import strip_citations
 
 _SENT = re.compile(r"(?<=[.!?])\s+|\n+")
+# 0.72 refused correct answers that paraphrased a code example's comment;
+# 0.68 still catches invented config keys in the sample I checked by hand.
 
 
 def _sentences(chunk: Chunk) -> list[str]:
@@ -23,7 +25,7 @@ def _sentences(chunk: Chunk) -> list[str]:
 
 
 class CitationGate:
-    def __init__(self, threshold: float = 0.72):
+    def __init__(self, threshold: float = 0.68):
         self.threshold = threshold
 
     def unsupported(self, claims: list[str], chunks: list[Chunk]) -> list[str]:
