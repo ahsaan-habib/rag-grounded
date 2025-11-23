@@ -40,6 +40,12 @@ def cmd_ask(args) -> None:
         print("\n" + res.trace.model_dump_json(indent=2, exclude={"messages", "contexts"}))
 
 
+def cmd_serve(args) -> None:
+    import uvicorn
+
+    uvicorn.run("rag_grounded.api:app", host=args.host, port=args.port)
+
+
 def main() -> None:
     p = argparse.ArgumentParser(prog="rag")
     sub = p.add_subparsers(required=True)
@@ -52,6 +58,11 @@ def main() -> None:
     a.add_argument("question")
     a.add_argument("-v", "--verbose", action="store_true")
     a.set_defaults(func=cmd_ask)
+
+    srv = sub.add_parser("serve")
+    srv.add_argument("--host", default="127.0.0.1")
+    srv.add_argument("--port", type=int, default=8000)
+    srv.set_defaults(func=cmd_serve)
 
     args = p.parse_args()
     args.func(args)

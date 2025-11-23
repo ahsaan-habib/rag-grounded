@@ -12,6 +12,8 @@ dependencies = [
     "rank-bm25>=0.2.2",
     "pydantic>=2.7",
     "beautifulsoup4>=4.12",
+    "fastapi>=0.111",
+    "uvicorn[standard]>=0.30",
     "pypdf>=4.2",
 ]
 
