@@ -3,16 +3,35 @@ from __future__ import annotations
 import chromadb
 
 from ..config import settings
-from ..embed import embed_docs, embed_query
+from ..embed import embed_docs, embed_query, fingerprint
 from ..ingest.chunker import Chunk
 
 
+class IndexModelMismatch(RuntimeError):
+    pass
+
+
 class VectorStore:
-    def __init__(self, path: str | None = None, collection: str | None = None):
+    def __init__(self, path: str | None = None, collection: str | None = None,
+                 check_model: bool = True):
         self.client = chromadb.PersistentClient(path=path or settings.index_dir)
         self.col = self.client.get_or_create_collection(
-            collection or settings.collection, metadata={"hnsw:space": "cosine"}
+            collection or settings.collection,
+            metadata={"hnsw:space": "cosine", "embed_fingerprint": fingerprint()},
         )
+        if check_model:
+            self.check_model()
+
+    def check_model(self) -> None:
+        """Vectors from two different models in one index make every similarity
+        score meaningless, and nothing errors. Fail loudly instead."""
+        stored = (self.col.metadata or {}).get("embed_fingerprint")
+        current = fingerprint()
+        if stored and stored != current and self.col.count():
+            raise IndexModelMismatch(
+                f"index was built with {stored!r}, current model gives {current!r}. "
+                "Re-ingest or pin the embedding model."
+            )
 
     def add(self, chunks: list[Chunk], batch: int = 256) -> None:
         for i in range(0, len(chunks), batch):

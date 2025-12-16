@@ -62,6 +62,14 @@ makes a small local model a reasonable default: it's cheap to run on every eval
 pass and the gate catches what it invents. Swap `RAG_LLM_MODEL` for anything
 Ollama serves.
 
+## Index/model mismatch guard
+
+The collection stores a fingerprint of the embedding model (name + a few
+dimensions of a fixed canary sentence). Opening the index with a model that
+produces different vectors raises `IndexModelMismatch` instead of quietly
+returning off-topic chunks. This exists because it happened: an unpinned
+dependency changed the embeddings, nothing errored, and recall just fell.
+
 ## Known gaps
 
 - The gate checks similarity, not entailment. A claim about an *adjacent*
