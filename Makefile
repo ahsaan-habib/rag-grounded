@@ -1,4 +1,4 @@
-.PHONY: install corpus ingest serve ask clean
+.PHONY: install corpus ingest reindex serve ask clean
 
 install:
 	python -m venv .venv && .venv/bin/pip install -e .
@@ -8,6 +8,9 @@ corpus:
 
 ingest:
 	rag ingest data/corpus
+
+reindex:
+	rag ingest data/corpus --reset
 
 serve:
 	rag serve --port 8000
