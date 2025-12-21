@@ -16,7 +16,7 @@ class Settings:
     embed_model: str = field(default_factory=lambda: _env("EMBED_MODEL", "BAAI/bge-small-en-v1.5"))
     rerank_model: str = field(default_factory=lambda: _env("RERANK_MODEL", "BAAI/bge-reranker-base"))
     ollama_url: str = field(default_factory=lambda: _env("OLLAMA_URL", "http://localhost:11434"))
-    llm_model: str = field(default_factory=lambda: _env("LLM_MODEL", "qwen3:4b"))
+    llm_model: str = field(default_factory=lambda: _env("LLM_MODEL", "qwen3:4b-instruct"))
     top_k: int = field(default_factory=lambda: int(_env("TOP_K", "6")))
 
 

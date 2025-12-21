@@ -45,7 +45,7 @@ isn't left at a dead end.
 Needs Python 3.10+ and [Ollama](https://ollama.com) with the model pulled.
 
 ```bash
-ollama pull qwen3:4b
+ollama pull qwen3:4b-instruct   # not plain qwen3:4b: that tag is now a thinking-only build
 make install && source .venv/bin/activate
 make corpus     # sparse-clones laravel/docs, filament docs, livewire docs
 make ingest     # chunks + embeds + builds bm25 next to chroma
@@ -61,6 +61,10 @@ The point of the gate is that the model is *not* trusted to stay grounded. That
 makes a small local model a reasonable default: it's cheap to run on every eval
 pass and the gate catches what it invents. Swap `RAG_LLM_MODEL` for anything
 Ollama serves.
+
+The default is `qwen3:4b-instruct`, not plain `qwen3:4b`: that tag now points at
+a thinking-only build that ignores `think: false` and writes its reasoning into
+the answer, where the gate (rightly) refuses it.
 
 ## Index/model mismatch guard
 
