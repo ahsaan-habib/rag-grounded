@@ -1,4 +1,5 @@
-"""Prompts live in prompts/*.yaml and are loaded by id.
+"""Prompts live next to this file as <id>.yaml and are loaded by id. They ship
+inside the package, so a plain (non-editable) install finds them too.
 
 A prompt edit is a behaviour change, so it goes through review like code and
 the version travels with every answer.
@@ -12,7 +13,7 @@ from pathlib import Path
 
 import yaml
 
-PROMPT_DIR = Path(os.environ.get("RAG_PROMPT_DIR", Path(__file__).resolve().parent.parent / "prompts"))
+PROMPT_DIR = Path(os.environ.get("RAG_PROMPT_DIR", Path(__file__).resolve().parent))
 
 
 @dataclass(frozen=True)

@@ -26,3 +26,6 @@ include = ["rag_grounded*"]
 
 [project.scripts]
 rag = "rag_grounded.cli:main"
+[tool.setuptools.package-data]
+rag_grounded = ["prompts/*.yaml"]
+

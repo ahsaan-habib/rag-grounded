@@ -15,7 +15,7 @@ question
    │                            ├─ RRF fusion ─▶ 30 candidates ─▶ cross-encoder rerank ─▶ top 6
    └── dense (bge-small)  ──────┘
                                                                          │
-                                       prompts/answer.yaml (versioned) ──▶ LLM (qwen3:4b via Ollama)
+                          rag_grounded/prompts/answer.yaml (versioned) ──▶ LLM (qwen3:4b-instruct via Ollama)
                                                                          │
                                                         citation gate: every claim must match a
                                                         sentence in a retrieved chunk
@@ -33,7 +33,7 @@ question
 | Dense | `rag_grounded/store/vector.py` | Chroma, cosine, `BAAI/bge-small-en-v1.5` |
 | Fuse | `rag_grounded/retrieval/fuse.py` | Reciprocal Rank Fusion, k=60 — no score normalisation needed |
 | Rerank | `rag_grounded/retrieval/rerank.py` | `BAAI/bge-reranker-base` over the 30 fused candidates |
-| Prompt | `prompts/*.yaml` | Loaded by id; version is recorded on every answer |
+| Prompt | `rag_grounded/prompts/*.yaml` | Loaded by id; version is recorded on every answer; shipped with the package |
 | Gate | `rag_grounded/answer/gate.py` | Claim ↔ chunk-sentence similarity; any unsupported claim → refusal |
 
 Refusals come in three flavours (`no_context`, `model_declined`,
