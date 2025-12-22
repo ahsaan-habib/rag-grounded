@@ -1,4 +1,4 @@
-.PHONY: install corpus ingest reindex serve ask clean
+.PHONY: install corpus ingest reindex serve ask test clean
 
 install:
 	python -m venv .venv && .venv/bin/pip install -e .
@@ -17,6 +17,9 @@ serve:
 
 ask:
 	@rag ask "$(Q)"
+
+test:
+	pytest -q
 
 clean:
 	rm -rf .chroma
