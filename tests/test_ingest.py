@@ -60,5 +60,14 @@ def test_chunk_ids_include_source():
     assert a.id != b.id
 
 
+def test_repeated_heading_in_one_file_gets_distinct_ids():
+    # broadcasting.md: an "Ably" section for the server and another for the client
+    same = "> [!NOTE]\n> The documentation below discusses how to use Ably in Pusher compatibility mode. " * 3
+    a = Section("laravel/broadcasting.md", "Ably", same + " Server side.")
+    b = Section("laravel/broadcasting.md", "Ably", same + " Client side.")
+    ids = [c.id for c in chunk_sections([a, b])]
+    assert len(ids) == len(set(ids)) == 2
+
+
 def test_approx_tokens():
     assert approx_tokens("one two three four five six seven eight nine ten") == 13

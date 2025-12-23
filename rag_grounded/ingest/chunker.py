@@ -52,7 +52,7 @@ def _tail(text: str, tokens: int) -> str:
 
 
 def chunk_section(section: Section, target: int = 650, max_tokens: int = 800,
-                  overlap: int = 100) -> list[Chunk]:
+                  overlap: int = 100, position: int = 0) -> list[Chunk]:
     pieces: list[str] = []
     current: list[str] = []
     size = 0
@@ -73,16 +73,21 @@ def chunk_section(section: Section, target: int = 650, max_tokens: int = 800,
 
     chunks = []
     for i, text in enumerate(pieces):
-        # source must be in the id: "Installation" exists in ~40 files
-        cid = hashlib.sha1(f"{section.source}:{section.heading}:{i}:{text[:200]}".encode()).hexdigest()[:16]
+        # source must be in the id: "Installation" exists in ~40 files. And the
+        # section's position: broadcasting.md has two "Ably" sections that open
+        # with the same paragraph.
+        key = f"{section.source}:{position}:{section.heading}:{i}:{text[:200]}"
+        cid = hashlib.sha1(key.encode()).hexdigest()[:16]
         chunks.append(Chunk(id=cid, source=section.source, heading=section.heading, text=text))
     return chunks
 
 
 def chunk_sections(sections: list[Section], **kw) -> list[Chunk]:
     out: list[Chunk] = []
+    seen: dict[str, int] = {}
     for s in sections:
-        out.extend(chunk_section(s, **kw))
+        position = seen[s.source] = seen.get(s.source, -1) + 1
+        out.extend(chunk_section(s, position=position, **kw))
     return out
 
 
